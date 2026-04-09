@@ -21,6 +21,6 @@ public class EmpleadoResponseDTO {
     private String tiempoVinculacion;  // "X años, Y meses"
     private String edadActual;         // "X años, Y meses, Z días"
 
-    // Valor agregado
+    // Agregado
     private String mensajeBienvenida;
 }

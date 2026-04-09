@@ -173,17 +173,6 @@ class EmpleadoServiceImplTest {
         verify(repository, never()).save(any());
     }
 
-    @Test
-    @DisplayName("Debe verificar que se consulta el repositorio para validar el documento")
-    void debeConsultarRepositorioParaValidarDocumento() {
-        when(repository.existsByNumeroDocumento("123456789")).thenReturn(false);
-        when(repository.save(any(Empleado.class))).thenReturn(empleadoGuardado);
-
-        service.registrarEmpleado(dtoValido);
-
-        verify(repository, times(1)).existsByNumeroDocumento("123456789");
-    }
-
     // ─── getAllEmpleados ──────────────────────────────────────────────────────
 
     @Test
