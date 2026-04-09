@@ -23,8 +23,8 @@ public class Empleado {
     @Column(nullable = false)
     private String apellidos;
 
-    @Column(nullable = false)
-    private String tipoDocumento;
+    @Enumerated(EnumType.STRING)
+    private Empleado.DocumentType tipoDocumento;
 
     @Column(nullable = false, unique = true)
     private String numeroDocumento;
@@ -40,4 +40,8 @@ public class Empleado {
 
     @Column(nullable = false)
     private Double salario;
+
+    public enum DocumentType {
+        RC, TI, CC, CE, PEP, PP, NIT
+    }
 }

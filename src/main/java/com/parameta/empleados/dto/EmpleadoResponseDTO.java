@@ -1,5 +1,6 @@
 package com.parameta.empleados.dto;
 
+import com.parameta.empleados.model.Empleado;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +10,7 @@ public class EmpleadoResponseDTO {
     private Long id;
     private String nombres;
     private String apellidos;
-    private String tipoDocumento;
+    private Empleado.DocumentType tipoDocumento;
     private String numeroDocumento;
     private String fechaNacimiento;
     private String fechaVinculacion;
