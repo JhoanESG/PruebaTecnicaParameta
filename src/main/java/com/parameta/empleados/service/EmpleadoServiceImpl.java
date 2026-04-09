@@ -20,25 +20,9 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     @Override
     public EmpleadoResponseDTO registrarEmpleado(EmpleadoRequestDTO dto) {
 
-        // 1. Validar mayoría de edad (18 años)
-
-        LocalDate hoy = LocalDate.now();
-        // Calcular la edad actual
-        Period edadPeriod = Period.between(dto.getFechaNacimiento(), hoy);
-        LocalDate fechaVinculacion = dto.getFechaVinculacion();
-
-        if (edadPeriod.getYears() < 18) {
-            throw new EmpleadoException("El empleado debe ser mayor de edad (mínimo 18 años)");
-        }
-
-        // 2. Validar que fecha de vinculación no sea futura
-        if (fechaVinculacion.isAfter(hoy)) {
-            throw new EmpleadoException("La fecha de vinculación no puede ser una fecha futura");
-        }
-
-        if (repository.existsByNumeroDocumento(dto.getNumeroDocumento())) {
-            throw new EmpleadoException("Ya existe un empleado con ese número de documento");
-        }
+        isOfLegalAge(dto.getFechaNacimiento());
+        isValidEmploymentDate(dto.getFechaVinculacion());
+        existDocumentNumber(dto.getNumeroDocumento());
 
         Empleado empleado = mapToEntity(dto);
         Empleado guardado = repository.save(empleado);
@@ -49,6 +33,29 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     @Override
     public List<EmpleadoResponseDTO> getAllEmpleados() {
         return repository.findAll().stream().map(this::mapToResponseDTO).collect(Collectors.toList());
+    }
+
+    private void isOfLegalAge(LocalDate fechaNacimiento) {
+        LocalDate hoy = LocalDate.now();
+        Period edadPeriod = Period.between(fechaNacimiento, hoy);
+
+        if (edadPeriod.getYears() < 18) {
+            throw new EmpleadoException("El empleado debe ser mayor de edad (mínimo 18 años)");
+        }
+    }
+
+    private void isValidEmploymentDate (LocalDate fechaVinculacion) {
+        LocalDate hoy = LocalDate.now();
+
+        if (fechaVinculacion.isAfter(hoy)) {
+            throw new EmpleadoException("La fecha de vinculación no puede ser una fecha futura");
+        }
+    }
+
+    private void existDocumentNumber (String numeroDocumento) {
+        if (repository.existsByNumeroDocumento(numeroDocumento)) {
+            throw new EmpleadoException("Ya existe un empleado con ese número de documento");
+        }
     }
 
     private Empleado mapToEntity(EmpleadoRequestDTO dto) {
@@ -90,6 +97,8 @@ public class EmpleadoServiceImpl implements EmpleadoService {
                 .salario(empleado.getSalario())
                 .tiempoVinculacion(tiempoVinculacion)
                 .edadActual(edadActual)
+                .mensajeBienvenida("Bienvenido/a, " + empleado.getNombres()
+                        + ". Llevas " + tiempoVinculacion + " con nosotros.")
                 .build();
     }
 }
